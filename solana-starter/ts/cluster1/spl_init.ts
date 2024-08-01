@@ -3,7 +3,7 @@
 import { Keypair, Connection, Commitment } from "@solana/web3.js";
 import { createMint } from '@solana/spl-token';
 import bs58 from "bs58";
-import wallet from "../../wba-wallet.json"
+import wallet from "../wba-wallet.json"
 
 // Decode the base58 secret key
 const secretKey = bs58.decode(wallet.skey);
