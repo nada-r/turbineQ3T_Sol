@@ -1,0 +1,5 @@
+keys.json
+dev-wallet.json
+*wallet.json
+
+node_modules/

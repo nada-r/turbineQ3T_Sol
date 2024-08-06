@@ -1,0 +1,12 @@
+*wallet.json
+node_modules
+target
+.DS_Store
+
+yarn.lock
+
+keys.json
+dev-wallet.json
+*wallet.json
+
+node_modules/
