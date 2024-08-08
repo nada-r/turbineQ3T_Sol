@@ -65,10 +65,44 @@ impl<'info> Take<'info> {
         };
 
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
-        transfer_checked(cpi_ctx, amount, self.mint_a.decimals, false)?;
+        transfer_checked(cpi_ctx, amount, self.mint_a.decimals, false)?; 
+
+        //transfer_checked(cpi_ctx, self.escrow.receive, self.mint_a.decimals) //Juan o Dmitry
 
         Ok(())
     }
+/*/Dmitry + Juan start
+    pub fn withdraw(&mut self) -> Result<()> {
+        let signer_seeds: [
+            &[&[u8]]; 1
+        ] = [&[b"escrow", self.maker.to_account_info.key().as_ref(), self.escrow.seed.to_le_bytes()[..], &[self.escrow.bump] ], ];
+
+        let accounts = TransferChecked{
+            from: self.vault.to_account_info(),
+            to : self.taker_ata_a.to_account_info(),
+            authority: self.escrow.to_account_info(),
+            mint: self.mint_a.to_account_info(),
+        };
+
+        let cpi_program: AccountInfo = self.token_program.to_account_info();
+
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, accounts, &signer_seeds);
+
+        transfer_checked(cpi_ctx, self.vault.amount, self.mint_a.decimals)?;
+
+        close_account(cpi_ctx)?;
+
+        Ok(())
+    }
+
+//Dmitry + Juan end */
+
+
+
+
+
+
+
 }
 
 
@@ -86,7 +120,16 @@ pub fn withdraw_and_close_vault(&mut self) -> Result<()> {
 
     transfer_checked(cpi_ctx, self.vault.amount, self.mint_a.decimals)?;
 
-    let accounts = CloseAccount
+    let accounts: CloseAccount = CloseAccount {
+        account: self.vault.to_account_info(),
+        destination: self.taker.to_account_info(),
+        authority: self.escrow.to_account_info(),
+    };
+
+    let cpi_program: AccountInfo = self.system_program.to_account_info();
+
+    let cpi_ctx: CpiContext<CloseAccount> = CpiContext::new_with_signer(cpi_program, accounts, &signer_seeds);
+    close_account(cpi_ctx)?;
 
     Ok(())
 }
