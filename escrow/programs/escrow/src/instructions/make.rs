@@ -45,7 +45,7 @@ impl<'info> Make<'info> {
             mint_b: self.mint.key(),
             receive,
             bump: bumps.escrow, 
-        })
+        });
         Ok(())
     }
 }
@@ -73,8 +73,9 @@ pub fn deposit(&mut self, amount: u64) -> Result<()> {
 
     transfer_checked(cpi_ctx, amount, self.mint_a.decimals, false)?;
 
-    Ok(()).
+    Ok(())
 }
+    
 
 
 /*

@@ -1,5 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenInterface, CloseAccount};
+use anchor_spl::token::TransferChecked;
+use anchor_spl::token::transfer_checked;
+use anchor_spl::token::close_account;
 
 //10h59 pm
 
@@ -71,7 +74,7 @@ impl<'info> Take<'info> {
 
         Ok(())
     }
-/*/Dmitry + Juan start
+/*/Dmitry + Juan start*
     pub fn withdraw(&mut self) -> Result<()> {
         let signer_seeds: [
             &[&[u8]]; 1
@@ -107,6 +110,12 @@ impl<'info> Take<'info> {
 
 
 pub fn withdraw_and_close_vault(&mut self) -> Result<()> {
+
+
+    let signer_seeds: [
+        &[&[u8]]; 1
+    ] = [&[b"escrow", self.maker.to_account_info.key().as_ref(), self.escrow.seed.to_le_bytes()[..], &[self.escrow.bump] ], ];
+
     let cpi_program: AccountInfo = self.token_program.to_account_info();
 
     let cpi_accounts: TransferChecked = TransferChecked {
@@ -116,7 +125,7 @@ pub fn withdraw_and_close_vault(&mut self) -> Result<()> {
         mint: self.mint_a.to_account_info(),
     };
 
-    let cpi_ctx : CpiContext<TransferChecked> = CpiContext::new_with_signer(cpi_program, cpi_accounts, &signer_seeds]);
+    let cpi_ctx : CpiContext<TransferChecked> = CpiContext::new_with_signer([cpi_program, cpi_accounts, &signer_seeds]);
 
     transfer_checked(cpi_ctx, self.vault.amount, self.mint_a.decimals)?;
 
